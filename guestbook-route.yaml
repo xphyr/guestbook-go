@@ -1,0 +1,26 @@
+---
+kind: Service
+apiVersion: v1
+metadata:
+  name: guestbook
+  labels:
+    app: guestbook
+spec:
+  ports:
+  - port: 3000
+    targetPort: http-server
+  selector:
+    app: guestbook
+  type: LoadBalancer
+
+---
+apiVersion: route.openshift.io/v1
+kind: Route
+metadata:
+  name: guestbook
+  labels:
+    app: guestbook
+spec:
+  to:
+    kind: Service
+    name: guestbook

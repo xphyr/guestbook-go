@@ -1,0 +1,24 @@
+---
+kind: Deployment
+apiVersion: apps/v1
+metadata:
+  name: guestbook-kata
+  labels:
+    app: guestbook
+spec:
+  replicas: 3
+  selector:
+    matchLabels:
+      app: guestbook-kata
+  template:
+    metadata:
+      labels:
+        app: guestbook
+    spec:
+      runtimeClassName: kata
+      containers:
+      - name: guestbook
+        image: quay.io/xphyr/guestbook:v1
+        ports:
+        - name: http-server
+          containerPort: 3000

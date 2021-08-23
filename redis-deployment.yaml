@@ -1,0 +1,99 @@
+---
+kind: Deployment
+apiVersion: apps/v1
+metadata:
+  name: redis-primary
+  labels:
+    app: redis
+    role: primary
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: redis
+      role: primary
+  template:
+    metadata:
+      labels:
+        app: redis
+        role: primary
+    spec:
+      containers:
+      - name: redis-primary
+        image: redis
+        volumeMounts:
+          - mountPath: /data
+            name: data-volume
+        ports:
+        - name: redis-server
+          containerPort: 6379
+      volumes:
+        - name: data-volume
+          emptyDir: {}
+
+---
+kind: Service
+apiVersion: v1
+metadata:
+  name: redis-primary
+  labels:
+    app: redis
+    role: primary
+spec:
+  ports:
+  - port: 6379
+    targetPort: redis-server
+  selector:
+    app: redis
+    role: primary
+
+---
+kind: Deployment
+apiVersion: apps/v1
+metadata:
+  name: redis-replica
+  labels:
+    app: redis
+    role: replica
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: redis
+      role: replica
+  template:
+    metadata:
+      labels:
+        app: redis
+        role: replica
+    spec:
+      containers:
+      - name: redis-replica
+        image: redis
+        command: ["redis-server"]
+        args: ["--slaveof", "redis-primary", "6379"]
+        volumeMounts:
+          - mountPath: /data
+            name: data-volume
+        ports:
+        - name: redis-server
+          containerPort: 6379
+      volumes:
+        - name: data-volume
+          emptyDir: {}
+
+---
+kind: Service
+apiVersion: v1
+metadata:
+  name: redis-replica
+  labels:
+    app: redis
+    role: replica
+spec:
+  ports:
+  - port: 6379
+    targetPort: redis-server
+  selector:
+    app: redis
+    role: replica
