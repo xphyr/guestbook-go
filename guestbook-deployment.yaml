@@ -17,7 +17,7 @@ spec:
     spec:
       containers:
       - name: guestbook
-        image: quay.io/xphyr/guestbook:v1
+        image: quay.io/xphyr/guestbook:v4
         ports:
         - name: http-server
           containerPort: 3000

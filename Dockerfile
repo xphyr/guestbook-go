@@ -17,8 +17,9 @@ WORKDIR /app
 ADD ./main.go ./go.mod ./go.sum .
 RUN CGO_ENABLED=0 GOOS=linux go build -o main .
 
-FROM scratch
+FROM registry.access.redhat.com/ubi8/ubi-minimal
 WORKDIR /app
+RUN microdnf install -y util-linux procps-ng
 COPY --from=0 /app/main .
 COPY ./public/index.html public/index.html
 COPY ./public/script.js public/script.js
